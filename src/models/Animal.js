@@ -34,3 +34,7 @@ const animalSchema = new mongoose.Schema({
     ref: "User",
   },
 });
+
+const Animal = mongoose.model("Animal", animalSchema);
+
+module.exports = Animal;
