@@ -3,20 +3,20 @@ const bcrypt = require("bcrypt");
 const jwt = require("../lib/jwt.js");
 const { SECRET } = require("../constants.js");
 
-exports.login = async (username, password) => {
+exports.login = async (email, password) => {
   // find user
 
-  const user = await User.findOne({ username });
+  const user = await User.findOne({ email });
 
 
   if (!user) {
-    throw new Error("Invalid username or password !");
+    throw new Error("Invalid email or password !");
   }
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
 
   if (!isPasswordValid) {
-    throw new Error("Invalid username or password !");
+    throw new Error("Invalid email or password !");
   }
 
   // create the payload

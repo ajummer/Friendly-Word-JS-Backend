@@ -7,9 +7,9 @@ router.get("/login", (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
   try {
-    const token = await userService.login(username, password);
+    const token = await userService.login(email, password);
 
     res.cookie("token", token);
     res.redirect("/");
