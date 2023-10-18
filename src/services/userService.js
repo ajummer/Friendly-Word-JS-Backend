@@ -34,10 +34,31 @@ exports.login = async (username, password) => {
 };
 
 exports.register = async (userData) => {
-  const user = await User.exists({ username: userData.username });
+  const user = await User.exists({ email: userData.email });
   if (user) {
-    throw new Error("Username already exists !");
+    throw new Error("User already exists !");
   }
 
-  return User.create(userData);
+  try {
+    const createdUser = await User.create(userData);
+    const token = await generateToken(createdUser);
+    return token;
+  } catch (err) {
+    throw new Error(err);
+  }
 };
+
+async function generateToken(user) {
+  // create the payload
+  const payload = {
+    _id: user._id,
+    username: user.username,
+    email: user.email,
+  };
+
+  // generate the token
+  const token = await jwt.sign(payload, SECRET, { expiresIn: "2d" });
+
+  // if everything goes right return the generated token
+  return token;
+}
