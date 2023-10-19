@@ -48,4 +48,36 @@ router.get("/details/:animalId/delete", async (req, res) => {
   res.redirect(`/animals`);
 });
 
+router.get("/details/:animalId/edit", async (req, res) => {
+  const animalId = req.params.animalId;
+
+  try {
+    const animal = await animalService.getSingle(animalId).lean();
+    res.render("animals/edit", { animal });
+  } catch (err) {
+    res.render("animals/edit", { error: getErrorMessage(err) });
+  }
+});
+
+router.post("/details/:animalId/edit", async (req, res) => {
+  const animalId = req.params.animalId;
+  const { name, years, kind, image, need, location, description } = req.body;
+  const animal = {
+    name: name,
+    years: Number(years),
+    kind: kind,
+    image: image,
+    need: need,
+    location: location,
+    description: description,
+  };
+  try {
+    const updatedAnimal = await animalService.update(animalId, animal);
+    await updatedAnimal.save();
+    res.redirect(`/animals/details/${animalId}`)
+  } catch (err) {
+    res.render("animals/edit", { error: getErrorMessage(err) });
+  }
+});
+
 module.exports = router;
