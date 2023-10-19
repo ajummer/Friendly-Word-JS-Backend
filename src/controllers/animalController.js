@@ -29,4 +29,17 @@ router.post("/create", async (req, res) => {
   }
 });
 
+router.get("/details/:animalId", async (req, res) => {
+  const animalId = req.params.animalId;
+  try {
+    const animal = await animalService.getSingle(animalId).lean();
+    if (!animal) {
+      res.redirect("/404");
+    }
+    res.render("animals/details", { animal });
+  } catch (err) {
+    res.render("404", { error: getErrorMessage(err) });
+  }
+});
+
 module.exports = router;
