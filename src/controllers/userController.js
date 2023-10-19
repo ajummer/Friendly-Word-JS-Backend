@@ -25,10 +25,11 @@ router.get("/register", (req, res) => {
 router.post("/register", async (req, res) => {
   const userData = req.body;
   try {
-    await userService.register(userData);
-    res.redirect("/users/login");
-  }catch(err){
-    res.render("users/register",{error: getErrorMessage(err)})
+    const token = await userService.register(userData);
+    res.cookie("token", token);
+    res.redirect("/");
+  } catch (err) {
+    res.render("users/register", { error: getErrorMessage(err) });
   }
 });
 
