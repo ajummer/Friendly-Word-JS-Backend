@@ -36,7 +36,8 @@ router.get("/details/:animalId", async (req, res) => {
     if (!animal) {
       res.redirect("/404");
     }
-    res.render("animals/details", { animal });
+    const isOwner = req.user?._id == animal.owner._id;
+    res.render("animals/details", { animal, isOwner });
   } catch (err) {
     res.render("404", { error: getErrorMessage(err) });
   }
