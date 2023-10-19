@@ -10,3 +10,5 @@ exports.getSingle = (animalId) => {
   const animal = Animal.findById(animalId);
   return animal;
 };
+
+exports.delete = (animalId) => Animal.findByIdAndDelete(animalId)

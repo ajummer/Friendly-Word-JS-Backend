@@ -33,14 +33,19 @@ router.get("/details/:animalId", async (req, res) => {
   const animalId = req.params.animalId;
   try {
     const animal = await animalService.getSingle(animalId).lean();
-    if (!animal) {
-      res.redirect("/404");
-    }
     const isOwner = req.user?._id == animal.owner._id;
+
     res.render("animals/details", { animal, isOwner });
   } catch (err) {
     res.render("404", { error: getErrorMessage(err) });
   }
+});
+
+router.get("/details/:animalId/delete", async (req, res) => {
+  const animalId = req.params.animalId;
+
+  await animalService.delete(animalId);
+  res.redirect(`/animals`);
 });
 
 module.exports = router;
