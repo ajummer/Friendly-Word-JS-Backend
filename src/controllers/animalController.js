@@ -11,21 +11,14 @@ router.get("/create", (req, res) => {
 });
 
 router.post("/create", async (req, res) => {
-  const { name, years, kind, image, need, location, description } = req.body;
   try {
-    await animalService.create({
-      name,
-      years: Number(years),
-      kind,
-      image,
-      need,
-      location,
-      description,
+    const animalData = await animalService.create({
+      ...req.body,
       owner: req.user._id,
     });
     res.redirect("/");
   } catch (err) {
-    res.render("animals/create", { err: getErrorMessage(err) });
+    res.render("animals/create", {  error: getErrorMessage(err) });
   }
 });
 
@@ -61,22 +54,15 @@ router.get("/details/:animalId/edit", async (req, res) => {
 
 router.post("/details/:animalId/edit", async (req, res) => {
   const animalId = req.params.animalId;
-  const { name, years, kind, image, need, location, description } = req.body;
-  const animal = {
-    name: name,
-    years: Number(years),
-    kind: kind,
-    image: image,
-    need: need,
-    location: location,
-    description: description,
-  };
+  const animal = req.body;
+
   try {
     const updatedAnimal = await animalService.update(animalId, animal);
-    await updatedAnimal.save();
-    res.redirect(`/animals/details/${animalId}`)
+    await updatedAnimal.save()
+    res.redirect(`/animals/details/${animalId}`);
   } catch (err) {
-    res.render("animals/edit", { error: getErrorMessage(err) });
+    console.log(err);
+    res.render(`animals/edit`, { animal, error: getErrorMessage(err) });
   }
 });
 

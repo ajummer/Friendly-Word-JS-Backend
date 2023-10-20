@@ -1,7 +1,9 @@
 const Animal = require("../models/Animal.js");
 const mongoose = require("mongoose");
 
-exports.create = (animalData) => Animal.create(animalData);
+exports.create = (animalData) => {
+  return Animal.create(animalData);
+};
 
 exports.getAll = () => Animal.find();
 
@@ -13,6 +15,9 @@ exports.getSingle = (animalId) => {
 exports.delete = (animalId) => Animal.findByIdAndDelete(animalId);
 
 exports.update = (animalId, animal) => {
-  const updatedAnimal = Animal.findByIdAndUpdate(animalId, animal, { new: true });
-  return updatedAnimal;
+  const animalUpdated = Animal.findByIdAndUpdate(animalId, animal, {
+    new: true,
+    runValidators: true,
+  });
+  return animalUpdated;
 };
