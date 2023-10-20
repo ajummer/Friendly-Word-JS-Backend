@@ -21,3 +21,6 @@ exports.update = (animalId, animal) => {
   });
   return animalUpdated;
 };
+
+
+exports.getLastThree = () => Animal.find().limit(3).sort({ _id: -1})
