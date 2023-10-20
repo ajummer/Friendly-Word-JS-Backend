@@ -25,7 +25,13 @@ exports.update = (animalId, animal) => {
 exports.getLastThree = () => Animal.find().limit(3).sort({ _id: -1 });
 
 exports.donate = async (animalId, user) => {
-  const animal =  await Animal.findById(animalId);
-  animal.donations.push(user)
-  return animal.save()
+  const animal = await Animal.findById(animalId);
+  animal.donations.push(user);
+  return animal.save();
+};
+
+exports.search = (searchCriteria) => {
+  if (searchCriteria) {
+    return Animal.find({ location: searchCriteria }).lean();
+  }
 };
