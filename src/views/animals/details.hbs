@@ -40,7 +40,9 @@
                         {{#if isDonated}}
                         <p id="already-donated">You already donated!</p>
                         {{else}}
+                        {{#if isAuthenticated}}
                         <a href="/animals/details/{{animal._id}}/donate" id="donation-btn">Donation</a>
+                        {{/if}}
                         {{/if}}
                     </div>
                     {{/unless}}

@@ -1,16 +1,18 @@
 const router = require("express").Router();
 const animalService = require("../services/animalService.js");
 const { getErrorMessage } = require("../utils/errorHelpers.js");
+const { isAuth } = require("../middlewares/authMiddleware.js");
+
 router.get("/", async (req, res) => {
   const animals = await animalService.getAll().lean();
   res.render("animals", { animals });
 });
 
-router.get("/create", (req, res) => {
+router.get("/create", isAuth, (req, res) => {
   res.render("animals/create");
 });
 
-router.post("/create", async (req, res) => {
+router.post("/create", isAuth, async (req, res) => {
   try {
     const animalData = await animalService.create({
       ...req.body,
@@ -28,22 +30,22 @@ router.get("/details/:animalId", async (req, res) => {
     const animal = await animalService.getSingle(animalId).lean();
     const isOwner = req.user?._id == animal.owner._id;
 
-    const isDonated = animal.donations.some(x => x.user == req.user?._id)
+    const isDonated = animal.donations.some((x) => x.user == req.user?._id);
 
-    res.render("animals/details", { animal, isOwner , isDonated });
+    res.render("animals/details", { animal, isOwner, isDonated });
   } catch (err) {
     res.render("404", { error: getErrorMessage(err) });
   }
 });
 
-router.get("/details/:animalId/delete", async (req, res) => {
+router.get("/details/:animalId/delete", isAuth, async (req, res) => {
   const animalId = req.params.animalId;
 
   await animalService.delete(animalId);
   res.redirect(`/animals`);
 });
 
-router.get("/details/:animalId/edit", async (req, res) => {
+router.get("/details/:animalId/edit", isAuth, async (req, res) => {
   const animalId = req.params.animalId;
 
   try {
@@ -54,7 +56,7 @@ router.get("/details/:animalId/edit", async (req, res) => {
   }
 });
 
-router.post("/details/:animalId/edit", async (req, res) => {
+router.post("/details/:animalId/edit", isAuth, async (req, res) => {
   const animalId = req.params.animalId;
   const animal = req.body;
 
@@ -68,7 +70,7 @@ router.post("/details/:animalId/edit", async (req, res) => {
   }
 });
 
-router.get("/details/:animalId/donate", async (req, res) => {
+router.get("/details/:animalId/donate", isAuth, async (req, res) => {
   const animalId = req.params.animalId;
   const user = req.user._id;
 
