@@ -18,7 +18,7 @@ router.post("/create", async (req, res) => {
     });
     res.redirect("/");
   } catch (err) {
-    res.render("animals/create", {  error: getErrorMessage(err) });
+    res.render("animals/create", { error: getErrorMessage(err) });
   }
 });
 
@@ -28,7 +28,9 @@ router.get("/details/:animalId", async (req, res) => {
     const animal = await animalService.getSingle(animalId).lean();
     const isOwner = req.user?._id == animal.owner._id;
 
-    res.render("animals/details", { animal, isOwner });
+    const isDonated = animal.donations.some(x => x.user == req.user?._id)
+
+    res.render("animals/details", { animal, isOwner , isDonated });
   } catch (err) {
     res.render("404", { error: getErrorMessage(err) });
   }
@@ -58,11 +60,23 @@ router.post("/details/:animalId/edit", async (req, res) => {
 
   try {
     const updatedAnimal = await animalService.update(animalId, animal);
-    await updatedAnimal.save()
+    await updatedAnimal.save();
     res.redirect(`/animals/details/${animalId}`);
   } catch (err) {
     console.log(err);
     res.render(`animals/edit`, { animal, error: getErrorMessage(err) });
+  }
+});
+
+router.get("/details/:animalId/donate", async (req, res) => {
+  const animalId = req.params.animalId;
+  const user = req.user._id;
+
+  try {
+    await animalService.donate(animalId, { user });
+    res.redirect(`/animals/details/${animalId}`);
+  } catch (err) {
+    res.render("animals/details", { error: getErrorMessage(err) });
   }
 });
 

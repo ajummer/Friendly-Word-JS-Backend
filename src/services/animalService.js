@@ -22,5 +22,10 @@ exports.update = (animalId, animal) => {
   return animalUpdated;
 };
 
+exports.getLastThree = () => Animal.find().limit(3).sort({ _id: -1 });
 
-exports.getLastThree = () => Animal.find().limit(3).sort({ _id: -1})
+exports.donate = async (animalId, user) => {
+  const animal =  await Animal.findById(animalId);
+  animal.donations.push(user)
+  return animal.save()
+};

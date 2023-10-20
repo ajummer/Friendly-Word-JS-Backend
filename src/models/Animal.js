@@ -33,6 +33,14 @@ const animalSchema = new mongoose.Schema({
     type: mongoose.Types.ObjectId,
     ref: "User",
   },
+  donations: [
+    {
+      user: {
+        type: mongoose.Types.ObjectId,
+        required: true,
+      },
+    },
+  ],
 });
 
 const Animal = mongoose.model("Animal", animalSchema);
