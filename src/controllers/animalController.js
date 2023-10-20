@@ -41,8 +41,18 @@ router.get("/details/:animalId", async (req, res) => {
 router.get("/details/:animalId/delete", isAuth, async (req, res) => {
   const animalId = req.params.animalId;
 
-  await animalService.delete(animalId);
-  res.redirect(`/animals`);
+  try {
+    const animal = await animalService.getSingle(animalId).lean();
+    if(animal.owner._id == req.user._id){
+      await animalService.delete(animalId);
+    } else {
+      res.redirect("/404")
+    }
+  } catch (err) {
+    res.render(`/animals/details/${animalId}`, {
+      error: "Unsuccessfull attempt to delete the post!",
+    });
+  }
 });
 
 router.get("/details/:animalId/edit", isAuth, async (req, res) => {
@@ -50,7 +60,11 @@ router.get("/details/:animalId/edit", isAuth, async (req, res) => {
 
   try {
     const animal = await animalService.getSingle(animalId).lean();
-    res.render("animals/edit", { animal });
+    if (animal.owner._id == req.user._id) {
+      res.render("animals/edit", { animal });
+    } else {
+      res.redirect("/404");
+    }
   } catch (err) {
     res.render("animals/edit", { error: getErrorMessage(err) });
   }
